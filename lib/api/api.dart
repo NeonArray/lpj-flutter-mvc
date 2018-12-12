@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:license_plate_judas_mvc/sentry/sentry.dart';
+
 
 class API {
 	final String name = 'lp-judas';
@@ -28,26 +30,40 @@ class API {
 			name: name,
 			options: options,
 		);
-		assert(app != null);
+
+		if (app == null) {
+			Sentry().logException(Exception('[FirebaseApp] could not be instantiated'));
+			return;
+		}
+
 		_auth = FirebaseAuth.fromApp(app);
-		print('Configured $app');
 	}
 
 
 	Future<Map<String, dynamic>> authWithEmailPassword(String email, String password) async {
 		FirebaseUser user;
+		Map<String, dynamic> userData = {
+			'user': null,
+			'idToken': null,
+			'email': null,
+			'error': null,
+		};
 
 		try {
 			user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+			userData = {
+				'user': user.uid,
+				'idToken': await user.getIdToken(refresh: false),
+				'email': user.email,
+			};
 		} catch (error) {
-			print(error);
-			return {};
+			Sentry().logMessage(
+				message: error.toString(),
+				culprit: 'Firebase_Auth',
+			);
+			userData['error'] = error.toString();
 		}
 
-		return {
-			'user': user.uid,
-			'idToken': await user.getIdToken(refresh: false),
-			'email': user.email,
-		};
+		return userData;
 	}
 }
