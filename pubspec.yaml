@@ -26,6 +26,7 @@ dependencies:
   firebase_core: ^0.2.5+1
   firebase_auth: ^0.6.6
   flutter_dotenv: ^2.0.1
+  sentry: any
 
 dev_dependencies:
   flutter_test:
