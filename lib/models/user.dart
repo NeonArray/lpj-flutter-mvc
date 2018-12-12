@@ -26,7 +26,7 @@ class UserModel extends Model implements ModelInterface {
 	}
 	bool _isLoading = false;
 	bool get isLoading => _isLoading;
-	API api = API();
+	API _api = API();
 
 
 	void notify() => notifyListeners();
