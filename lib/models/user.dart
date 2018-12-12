@@ -26,6 +26,7 @@ class UserModel extends Model implements ModelInterface {
 	}
 	bool _isLoading = false;
 	bool get isLoading => _isLoading;
+	API api = API();
 
 
 	void notify() => notifyListeners();
@@ -46,11 +47,11 @@ class UserModel extends Model implements ModelInterface {
 	Future<bool> authenticate(String email, String password) async {
 		lockUI();
 
-		Map<String, dynamic> response = await API.authWithEmailPassword(email, password);
+		Map<String, dynamic> response = await api.authWithEmailPassword(email, password);
 
 		if (response.containsKey('idToken')) {
 			_authenticatedUser = User(
-				id: response['localId'],
+				id: response['user'],
 				email: response['email'],
 				token: response['idToken'],
 			);
