@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:license_plate_judas_mvc/views/authenticate.dart';
 import 'package:license_plate_judas_mvc/models/user.dart';
 import 'package:license_plate_judas_mvc/controllers/user.dart';
 
 
-void main() => runApp(LicensePlateJudas());
+Future main() async {
+	await DotEnv().load('.env');
+	runApp(LicensePlateJudas());
+}
 
 
 class LicensePlateJudas extends StatefulWidget {
@@ -23,7 +27,6 @@ class _LicensePlateJudasState extends State<LicensePlateJudas> {
 	@override
 	void initState() {
 		userController.dispatcher.stream.listen((bool isAuthenticated) {
-			print('dispatch');
 			setState(() {
 				_isAuthenticated = isAuthenticated;
 			});
