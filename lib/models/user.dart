@@ -44,21 +44,26 @@ class UserModel extends Model implements ModelInterface {
 	}
 
 
-	Future<bool> authenticate(String email, String password) async {
+	Future<Map<String, dynamic>> authenticate(String email, String password) async {
 		lockUI();
 
-		Map<String, dynamic> response = await api.authWithEmailPassword(email, password);
+		Map<String, dynamic> responseData = await _api.authWithEmailPassword(email, password);
 
-		if (response.containsKey('idToken')) {
-			_authenticatedUser = User(
-				id: response['user'],
-				email: response['email'],
-				token: response['idToken'],
-			);
+		if (responseData['user'] == null) {
+			setAuthenticatedUser(responseData);
 		}
 
 		releaseUI();
 
-		return true;
+		return responseData;
+	}
+
+
+	void setAuthenticatedUser(Map<String, dynamic> userData) {
+		_authenticatedUser = User(
+			id: userData['user'],
+			email: userData['email'],
+			token: userData['idToken'],
+		);
 	}
 }
