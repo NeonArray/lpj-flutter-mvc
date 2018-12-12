@@ -12,20 +12,17 @@ class UserController {
 	}
 	UserModel get model => _model;
 
-
+	bool isLoading() => _model.isLoading;
 	void notify() => _model.notify();
 
 
-	Future<bool> authenticate(Map<String, String> formData) async {
-		if (formData['email'] == null || formData['password'] == null) {
-			return false;
-		}
+	Future<Map<String, dynamic>> authenticate(String email, String password) async {
+		final Map<String, dynamic> userData = await _model.authenticate(email, password);
 
-		if (await _model.authenticate(formData['email'], formData['password'])) {
+		if (userData['user'] != null) {
 			_dispatcher.add(true);
-			return true;
 		}
 
-		return false;
+		return userData;
 	}
 }
