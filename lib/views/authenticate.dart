@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
 
-import 'package:license_plate_judas_mvc/models/user.dart';
 import 'package:license_plate_judas_mvc/controllers/user.dart';
 
 
@@ -50,78 +48,101 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 								child: Column(
 									children: <Widget>[
 
-										TextFormField(
-											keyboardType: TextInputType.emailAddress,
-											decoration: InputDecoration(
-												labelText: 'E-Mail',
-												filled: true,
-												fillColor: Colors.white,
-											),
-											validator: (String value) {
-												if (value == '' || value.length > 64) {
-													return 'Invalid';
-												}
-											},
-											onSaved: (String value) {
-												_formData['email'] = value;
-											},
-										),
-
-										SizedBox(
-											height: 10.0,
-										),
-
-										TextFormField(
-											decoration: InputDecoration(
-												labelText: 'Password',
-												filled: true,
-												fillColor: Colors.white,
-											),
-											onSaved: (String value) {
-												_formData['password'] = value;
-											},
-											validator: (String value) {
-												if (value == '' || value.length > 64) {
-													return 'Invalid';
-												}
-											},
-										),
-
-										SizedBox(
-											height: 10.0,
-										),
-
-										// password confirm text field
-
-										SizedBox(
-											height: 10.0,
-										),
-
-										// switch signup mode button
-
-										SizedBox(
-											height: 30.0,
-										),
-
-										RaisedButton(
-											child: Text('Login'),
-											onPressed: () {
-												if (!_formKey.currentState.validate()) {
-													return;
-												}
-
-												_formKey.currentState.save();
-												widget.userController.authenticate(_formData);
-											}
-										)
-
-									],
+								TextFormField(
+								keyboardType: TextInputType.emailAddress,
+									decoration: InputDecoration(
+										labelText: 'E-Mail',
+										filled: true,
+										fillColor: Colors.white,
+									),
+									validator: (String value) {
+										if (value == '' || value.length > 64) {
+											return 'Invalid';
+										}
+									},
+									onSaved: (String value) {
+										_formData['email'] = value;
+									},
 								),
+
+								SizedBox(
+									height: 10.0,
+								),
+
+								TextFormField(
+									decoration: InputDecoration(
+										labelText: 'Password',
+										filled: true,
+										fillColor: Colors.white,
+									),
+									onSaved: (String value) {
+										_formData['password'] = value;
+									},
+									validator: (String value) {
+										if (value == '' || value.length > 64) {
+											return 'Invalid';
+										}
+									},
+								),
+
+								SizedBox(
+									height: 10.0,
+								),
+
+								// password confirm text field
+
+								SizedBox(
+									height: 10.0,
+								),
+
+								// switch signup mode button
+
+								SizedBox(
+									height: 30.0,
+								),
+
+								widget.userController.isLoading()
+										? CircularProgressIndicator()
+										: RaisedButton(
+										child: Text('Login'),
+										onPressed: () async {
+											if (!_formKey.currentState.validate()) {
+												return;
+											}
+
+											_formKey.currentState.save();
+
+											final Map<String, dynamic> result = await widget.userController.authenticate(_formData['email'], _formData['password']);
+
+											if (result['error'] != null) {
+												showDialog(
+													context: context,
+													builder: (BuildContext context) {
+														return AlertDialog(
+															title: Text('An Error Occurred!'),
+															content: Text(result['error']),
+															actions: <Widget>[
+																FlatButton(
+																	child: Text('Okay'),
+																	onPressed: () {
+																		Navigator.of(context).pop();
+																	},
+																)
+															],
+														);
+													},
+												);
+											}
+										}
+									),
+
+								],
 							),
 						),
 					),
 				),
 			),
+		),
 		);
 	}
 }
