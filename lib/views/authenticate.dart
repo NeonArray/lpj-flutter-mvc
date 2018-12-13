@@ -22,6 +22,8 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 		'email': null,
 		'password': null,
 	};
+	final TextEditingController _passwordTextController = TextEditingController();
+	AuthMode _authMode = AuthMode.Login;
 
 
 	@override
