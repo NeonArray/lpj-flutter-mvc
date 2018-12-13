@@ -1,24 +1,16 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'package:license_plate_judas_mvc/definitions/user.dart';
+import 'package:license_plate_judas_mvc/definitions/auth_mode.dart';
 import 'package:license_plate_judas_mvc/models/model_interface.dart';
 import 'package:license_plate_judas_mvc/api/api.dart';
 
 
-class User {
-	final String id;
-	final String email;
-	final String token;
-
-	User({
-		@required this.id,
-		@required this.email,
-		@required this.token,
-	});
-}
-
-
+/// :: What's This? ::
+/// The model is responsible for the fetching of data. Whether that's from REST API's, databases, or
+/// the IO stream. We want to keep as much logic out of here as possible that isn't absolutely
+/// necessary. This model should be able to swap sources without impacting the rest of the application.
 class UserModel extends Model implements ModelInterface {
 	User _authenticatedUser;
 	User get authedUser {
