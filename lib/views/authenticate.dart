@@ -32,10 +32,123 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 	}
 
 
+	Widget _buildEmailField() {
+		return TextFormField(
+			keyboardType: TextInputType.emailAddress,
+			decoration: InputDecoration(
+				labelText: 'E-Mail',
+				filled: true,
+				fillColor: Colors.white,
+			),
+			validator: (String value) {
+				if (value.isEmpty || !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(value)) {
+					return 'Invalid email address, please ente valid email';
+				}
+			},
+			onSaved: (String value) {
+				_formData['email'] = value;
+			},
+		);
+	}
+
+
+	Widget _buildPasswordField() {
+		return TextFormField(
+			decoration: InputDecoration(
+				labelText: 'Password',
+				filled: true,
+				fillColor: Colors.white,
+			),
+			obscureText: true,
+			controller: _passwordTextController,
+			onSaved: (String value) {
+				_formData['password'] = value;
+			},
+			validator: (String value) {
+				if (value.isEmpty || value.length < 6) {
+					return 'Password invalid';
+				}
+			},
+		);
+	}
+
+
+	Widget _buildPasswordConfirmField() {
+		return TextFormField(
+			obscureText: true,
+			decoration: InputDecoration(
+				labelText: 'Confirm Password',
+				filled: true,
+				fillColor: Colors.white,
+			),
+			validator: (String value) {
+				if (_passwordTextController.text != value) {
+					return 'Passwords must match';
+				}
+			},
+		);
+	}
+
+
+	Widget _buildSubmitButton() {
+		return RaisedButton(
+			child: Text(_authMode == AuthMode.Login ? 'Login' : 'Register'),
+			onPressed: _submit,
+		);
+	}
+
+
+	Future<void> _submit() async {
+		if (!_formKey.currentState.validate()) {
+			return;
+		}
+
+		_formKey.currentState.save();
+
+		final Map<String, dynamic> result = await widget.userController.authenticate(_formData['email'], _formData['password'], _authMode);
+
+		if (result['error'] != null) {
+			_buildErrorDialog(result['error']);
+		}
+	}
+
+
+	void _buildErrorDialog(String error) {
+		showDialog(
+			context: context,
+			builder: (BuildContext context) {
+				return AlertDialog(
+					title: Text('An Error Occurred!'),
+					content: Text(error),
+					actions: <Widget>[
+						FlatButton(
+							child: Text('Okay'),
+							onPressed: () {
+								Navigator.of(context).pop();
+							},
+						)
+					],
+				);
+			},
+		);
+	}
+
+
+	Widget _buildAuthModeButton() {
+		return FlatButton(
+			child: Text('Switch to ${_authMode == AuthMode.Login ? 'Register' : 'Login'}'),
+			onPressed: () {
+				setState(() {
+					_authMode = _authMode == AuthMode.Login ? AuthMode.Register : AuthMode.Login;
+				});
+			},
+		);
+	}
+
+
 	@override
 	Widget build(BuildContext context) {
-		final double deviceWidth = MediaQuery.of(context).size.width;
-		final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.85;
+		final double targetWidth = getDeviceTargetWidth(context);
 
 		return Scaffold(
 			appBar: AppBar(
@@ -51,102 +164,42 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 								key: _formKey,
 								child: Column(
 									children: <Widget>[
+										_buildEmailField(),
 
-								TextFormField(
-								keyboardType: TextInputType.emailAddress,
-									decoration: InputDecoration(
-										labelText: 'E-Mail',
-										filled: true,
-										fillColor: Colors.white,
-									),
-									validator: (String value) {
-										if (value == '' || value.length > 64) {
-											return 'Invalid';
-										}
-									},
-									onSaved: (String value) {
-										_formData['email'] = value;
-									},
+										SizedBox(
+											height: 10.0,
+										),
+
+										_buildPasswordField(),
+
+										SizedBox(
+											height: 10.0,
+										),
+
+										_authMode == AuthMode.Register ? _buildPasswordConfirmField() : Container(),
+
+										SizedBox(
+											height: 10.0,
+										),
+
+										// switch signup mode button
+
+										SizedBox(
+											height: 30.0,
+										),
+
+										_buildAuthModeButton(),
+
+										widget.userController.isLoading()
+											? CircularProgressIndicator()
+											: _buildSubmitButton(),
+									],
 								),
-
-								SizedBox(
-									height: 10.0,
-								),
-
-								TextFormField(
-									decoration: InputDecoration(
-										labelText: 'Password',
-										filled: true,
-										fillColor: Colors.white,
-									),
-									onSaved: (String value) {
-										_formData['password'] = value;
-									},
-									validator: (String value) {
-										if (value == '' || value.length > 64) {
-											return 'Invalid';
-										}
-									},
-								),
-
-								SizedBox(
-									height: 10.0,
-								),
-
-								// password confirm text field
-
-								SizedBox(
-									height: 10.0,
-								),
-
-								// switch signup mode button
-
-								SizedBox(
-									height: 30.0,
-								),
-
-								widget.userController.isLoading()
-										? CircularProgressIndicator()
-										: RaisedButton(
-										child: Text('Login'),
-										onPressed: () async {
-											if (!_formKey.currentState.validate()) {
-												return;
-											}
-
-											_formKey.currentState.save();
-
-											final Map<String, dynamic> result = await widget.userController.authenticate(_formData['email'], _formData['password']);
-
-											if (result['error'] != null) {
-												showDialog(
-													context: context,
-													builder: (BuildContext context) {
-														return AlertDialog(
-															title: Text('An Error Occurred!'),
-															content: Text(result['error']),
-															actions: <Widget>[
-																FlatButton(
-																	child: Text('Okay'),
-																	onPressed: () {
-																		Navigator.of(context).pop();
-																	},
-																)
-															],
-														);
-													},
-												);
-											}
-										}
-									),
-
-								],
 							),
 						),
 					),
 				),
 			),
-		),
 		);
 	}
 }
