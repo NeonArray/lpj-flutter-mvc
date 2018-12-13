@@ -65,4 +65,14 @@ class UserModel extends Model implements ModelInterface {
 			token: userData['idToken'],
 		);
 	}
+
+
+	Future<void> resetPasswordWithEmail(String email) async {
+		return await _api.resetPasswordWithEmail(email);
+	}
+
+
+	Future<void> signUserOut() async {
+		return await _api.signUserOut();
+	}
 }
