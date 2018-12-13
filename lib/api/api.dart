@@ -32,7 +32,7 @@ class API {
 		);
 
 		if (app == null) {
-			Sentry().logException(Exception('[FirebaseApp] could not be instantiated'));
+			Sentry().logException(Exception('[FirebaseApp : ' + name + '] could not be instantiated'));
 			return;
 		}
 
