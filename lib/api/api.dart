@@ -56,9 +56,30 @@ class API {
 				message: error.toString(),
 				culprit: 'Firebase_Auth',
 			);
+
 			userData['error'] = error.toString();
 		}
 
 		return userData;
+	}
+
+
+	Future<Map<String, String>> createUserWithEmailAndPassword(String email, String password) async {
+		return await _authBase(email, password, _auth.createUserWithEmailAndPassword);
+	}
+
+
+	Future<Map<String, String>> authWithEmailPassword(String email, String password) async {
+		return await _authBase(email, password, _auth.signInWithEmailAndPassword);
+	}
+
+
+	Future<void> resetPasswordWithEmail(String email) async {
+		return await _auth.sendPasswordResetEmail(email: email);
+	}
+
+
+	Future<void> signUserOut() async {
+		return await _auth.signOut();
 	}
 }
