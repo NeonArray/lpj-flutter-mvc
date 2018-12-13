@@ -3,6 +3,8 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:license_plate_judas_mvc/views/authenticate.dart';
+import 'package:license_plate_judas_mvc/views/lookup.dart';
+
 import 'package:license_plate_judas_mvc/models/user.dart';
 import 'package:license_plate_judas_mvc/controllers/user.dart';
 
@@ -51,7 +53,8 @@ class _LicensePlateJudasState extends State<LicensePlateJudas> {
 					// The '/' is a special route that Flutter uses to show as the 'home' screen.
 					// you CANNOT use both the home: property in MaterialApp as well as this '/' route
 					// or it will throw an error. Use one or the other.
-					'/': (BuildContext context) => !_isAuthenticated ? AuthenticateView(userController) : Text('OOOOOO girl'),
+					'/': (BuildContext context) => !_isAuthenticated ? AuthenticateView(userController) : LookupView(userController),
+					'/lookup': (BuildContext context) => !_isAuthenticated ? AuthenticateView(userController) : LookupView(userController),
 				},
 			),
 		);
