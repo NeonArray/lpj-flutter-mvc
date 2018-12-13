@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:license_plate_judas_mvc/controllers/user.dart';
+import 'package:license_plate_judas_mvc/definitions/auth_mode.dart';
+import 'package:license_plate_judas_mvc/utility/media_query.dart';
 
 
 class AuthenticateView extends StatefulWidget {
-	UserController _userController;
+	final UserController _userController;
 	UserController get userController => _userController;
 
 	AuthenticateView(this._userController);
