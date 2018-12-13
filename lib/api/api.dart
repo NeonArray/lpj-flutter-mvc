@@ -40,17 +40,12 @@ class API {
 	}
 
 
-	Future<Map<String, dynamic>> authWithEmailPassword(String email, String password) async {
+	Future<Map<String, String>> _authBase(String email, String password, Function callback) async {
 		FirebaseUser user;
-		Map<String, dynamic> userData = {
-			'user': null,
-			'idToken': null,
-			'email': null,
-			'error': null,
-		};
+		Map<String, String> userData = {};
 
 		try {
-			user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+			user = await callback(email: email, password: password);
 			userData = {
 				'user': user.uid,
 				'idToken': await user.getIdToken(refresh: false),
