@@ -36,12 +36,19 @@ class UserModel extends Model implements ModelInterface {
 	}
 
 
-	Future<Map<String, dynamic>> authenticate(String email, String password) async {
+	Future<Map<String, String>> authenticate(String email, String password, AuthMode mode) async {
 		lockUI();
 
-		Map<String, dynamic> responseData = await _api.authWithEmailPassword(email, password);
+		Map<String, String> responseData;
 
-		if (responseData['user'] == null) {
+		if (mode == AuthMode.Login) {
+			responseData = await _api.authWithEmailPassword(email, password);
+		} else if (mode == AuthMode.Register) {
+			responseData = await _api.createUserWithEmailAndPassword(email, password);
+		}
+
+		/// We only want to authenticate a user if the response data has something of value.
+		if (responseData['user'] != null) {
 			setAuthenticatedUser(responseData);
 		}
 
