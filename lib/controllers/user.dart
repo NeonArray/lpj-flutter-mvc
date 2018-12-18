@@ -65,6 +65,7 @@ class UserController {
 
 
 	Future<void> signUserOut() async {
-		return await _model.signUserOut();
+		await _model.signUserOut();
+		_dispatcher.add(false);
 	}
 }
