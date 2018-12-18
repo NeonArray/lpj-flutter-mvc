@@ -4,6 +4,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:license_plate_judas_mvc/controllers/user.dart';
 import 'package:license_plate_judas_mvc/definitions/auth_mode.dart';
 import 'package:license_plate_judas_mvc/utility/media_query.dart';
+import 'package:license_plate_judas_mvc/utility/client_error.dart';
 
 
 class AuthenticateView extends StatefulWidget {
@@ -106,31 +107,16 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 		final Map<String, dynamic> result = await widget.userController.authenticate(_formData['email'], _formData['password'], _authMode);
 
 		if (result['error'] != null) {
-			_buildErrorDialog(result['error']);
+			ClientError(
+				context: context,
+				message: result['error'],
+				callback: () {
+					Navigator.of(context).pop();
+				}
+			);
 		}
 
 		toggleProgressHUD();
-	}
-
-
-	void _buildErrorDialog(String error) {
-		showDialog(
-			context: context,
-			builder: (BuildContext context) {
-				return AlertDialog(
-					title: Text('An Error Occurred!'),
-					content: Text(error),
-					actions: <Widget>[
-						FlatButton(
-							child: Text('Okay'),
-							onPressed: () {
-								Navigator.of(context).pop();
-							},
-						)
-					],
-				);
-			},
-		);
 	}
 
 
