@@ -3,7 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:license_plate_judas_mvc/sentry/sentry.dart';
+import 'package:license_plate_judas_mvc/utility/sentry.dart';
 
 
 class API {
