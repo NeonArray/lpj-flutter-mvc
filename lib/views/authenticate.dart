@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'package:license_plate_judas_mvc/controllers/user.dart';
 import 'package:license_plate_judas_mvc/definitions/auth_mode.dart';
@@ -24,12 +25,7 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 	};
 	final TextEditingController _passwordTextController = TextEditingController();
 	AuthMode _authMode = AuthMode.Login;
-
-
-	@override
-	void initState() {
-		super.initState();
-	}
+	bool _isLoading = false;
 
 
 	Widget _buildEmailField() {
@@ -105,11 +101,15 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 
 		_formKey.currentState.save();
 
+		toggleProgressHUD();
+
 		final Map<String, dynamic> result = await widget.userController.authenticate(_formData['email'], _formData['password'], _authMode);
 
 		if (result['error'] != null) {
 			_buildErrorDialog(result['error']);
 		}
+
+		toggleProgressHUD();
 	}
 
 
@@ -146,6 +146,34 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 	}
 
 
+	void toggleProgressHUD() {
+		setState(() {
+			_isLoading = !_isLoading;
+		});
+	}
+
+
+	List<Widget> _buildFormWidgets() {
+		return [
+			_buildEmailField(),
+
+			SizedBox(height: 10.0,),
+
+			_buildPasswordField(),
+
+			SizedBox(height: 10.0,),
+
+			_authMode == AuthMode.Register ? _buildPasswordConfirmField() : Container(),
+
+			SizedBox(height: 10.0,),
+
+			_buildAuthModeButton(),
+
+			_buildSubmitButton(),
+		];
+	}
+
+
 	@override
 	Widget build(BuildContext context) {
 		final double targetWidth = getDeviceTargetWidth(context);
@@ -154,51 +182,24 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 			appBar: AppBar(
 				title: Text('Login'),
 			),
-			body: Container(
-				padding: EdgeInsets.all(10.0),
-				child: Center(
-					child: SingleChildScrollView(
+			body: ModalProgressHUD(
+				opacity: 0.5,
+				progressIndicator: CircularProgressIndicator(),
+				child: SingleChildScrollView(
+					child: Center(
 						child: Container(
 							width: targetWidth,
 							child: Form(
 								key: _formKey,
 								child: Column(
-									children: <Widget>[
-										_buildEmailField(),
-
-										SizedBox(
-											height: 10.0,
-										),
-
-										_buildPasswordField(),
-
-										SizedBox(
-											height: 10.0,
-										),
-
-										_authMode == AuthMode.Register ? _buildPasswordConfirmField() : Container(),
-
-										SizedBox(
-											height: 10.0,
-										),
-
-										// switch signup mode button
-
-										SizedBox(
-											height: 30.0,
-										),
-
-										_buildAuthModeButton(),
-
-										widget.userController.isLoading()
-											? CircularProgressIndicator()
-											: _buildSubmitButton(),
-									],
+									mainAxisSize: MainAxisSize.min,
+									children: _buildFormWidgets(),
 								),
 							),
 						),
 					),
 				),
+				inAsyncCall: _isLoading,
 			),
 		);
 	}
