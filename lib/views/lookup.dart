@@ -100,7 +100,7 @@ class _LookupViewState extends State<LookupView> {
 		return Scaffold(
 			drawer: NavigationDrawer(),
 			appBar: AppBar(
-				title: Text('Lookup Plate'),
+				title: Text('Lookup/Report a Plate'),
 			),
 			body: Container(
 				padding: EdgeInsets.all(10.0),
