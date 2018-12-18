@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:license_plate_judas_mvc/controllers/user.dart';
 import 'package:license_plate_judas_mvc/utility/media_query.dart';
 import 'package:license_plate_judas_mvc/utility/state_list.dart';
+import 'package:license_plate_judas_mvc/views/navigation_drawer.dart';
 
 
 class LookupView extends StatefulWidget {
@@ -28,29 +29,6 @@ class _LookupViewState extends State<LookupView> {
 		super.initState();
 	}
 
-
-	Drawer _buildDrawer(BuildContext context) {
-		return Drawer(
-			child: Column(
-				children: <Widget>[
-					AppBar(
-						automaticallyImplyLeading: false,
-						title: Text('Choose'),
-					),
-					ListTile(
-						leading: Icon(Icons.edit),
-						title: Text('Sign Out'),
-						onTap: () async {
-							await widget.userController.signUserOut();
-							Navigator.pushReplacementNamed(context, '/');
-						},
-					),
-					Divider(),
-					// LogoutListTile(),
-				],
-			),
-		);
-	}
 
 
 	Widget _buildStateDropdown() {
@@ -120,7 +98,7 @@ class _LookupViewState extends State<LookupView> {
 		final double targetWidth = getDeviceTargetWidth(context);
 
 		return Scaffold(
-			drawer: _buildDrawer(context),
+			drawer: NavigationDrawer(),
 			appBar: AppBar(
 				title: Text('Lookup Plate'),
 			),
