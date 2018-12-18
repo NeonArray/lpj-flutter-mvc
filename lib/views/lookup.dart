@@ -64,8 +64,8 @@ class _LookupViewState extends State<LookupView> {
 				fillColor: Colors.white,
 			),
 			validator: (String value) {
-				if (value.isEmpty) {
-					return 'Cannot be empty';
+				if (value.isEmpty || value.length > 8) {
+					return 'Invalid format. Must not be empty and less than 8 characters.';
 				}
 			},
 			onSaved: (String value) {
