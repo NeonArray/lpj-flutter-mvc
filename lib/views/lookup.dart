@@ -39,8 +39,9 @@ class _LookupViewState extends State<LookupView> {
 					),
 					ListTile(
 						leading: Icon(Icons.edit),
-						title: Text('Manage Products'),
-						onTap: () {
+						title: Text('Sign Out'),
+						onTap: () async {
+							await widget.userController.signUserOut();
 							Navigator.pushReplacementNamed(context, '/');
 						},
 					),
@@ -100,10 +101,12 @@ class _LookupViewState extends State<LookupView> {
 		return Row(
 			children: <Widget>[
 				RaisedButton(
+					color: Colors.tealAccent,
 					child: Text('Lookup'),
 					onPressed: ()  {},
 				),
 				RaisedButton(
+					color: Colors.teal,
 					child: Text('Report'),
 					onPressed: ()  {},
 				),
