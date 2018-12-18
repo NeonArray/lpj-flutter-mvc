@@ -81,15 +81,25 @@ class _LookupViewState extends State<LookupView> {
 				RaisedButton(
 					color: Colors.tealAccent,
 					child: Text('Lookup'),
-					onPressed: ()  {},
+					onPressed: ()  {_submit();},
 				),
 				RaisedButton(
 					color: Colors.teal,
 					child: Text('Report'),
-					onPressed: ()  {},
+					onPressed: ()  {_submit();},
 				),
 			],
 		);
+	}
+
+
+	void _submit() {
+
+		if (!_formKey.currentState.validate()) {
+			return;
+		}
+
+		_formKey.currentState.save();
 	}
 
 
