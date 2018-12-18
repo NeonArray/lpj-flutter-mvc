@@ -73,6 +73,8 @@ class UserModel extends Model implements ModelInterface {
 
 
 	Future<void> signUserOut() async {
+		_authenticatedUser = null;
+
 		return await _api.signUserOut();
 	}
 }
