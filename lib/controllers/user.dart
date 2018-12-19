@@ -51,7 +51,18 @@ class UserController {
 	Future<Map<String, String>> authenticate(String email, String password, [AuthMode mode = AuthMode.Login]) async {
 		final Map<String, String> userData = await _model.authenticate(email, password, mode);
 
-		if (userData['user'] != null) {
+		if (userData['id'] != null) {
+			_dispatcher.add(true);
+		}
+
+		return userData;
+	}
+
+
+	Future<Map<String, String>> autoAuthenticate() async {
+		final Map<String, String> userData = await _model.autoAuthenticate();
+
+		if (userData['id'] != null) {
 			_dispatcher.add(true);
 		}
 
