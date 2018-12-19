@@ -51,8 +51,9 @@ class UserModel extends Model implements ModelInterface {
 		}
 
 		/// We only want to authenticate a user if the response data has something of value.
-		if (responseData['user'] != null) {
-			setAuthenticatedUser(responseData);
+		if (responseData['id'] != null) {
+			_setAuthenticatedUser(responseData);
+			_setUserCookie(responseData);
 		}
 
 		releaseUI();
