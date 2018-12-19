@@ -4,9 +4,11 @@ import 'package:license_plate_judas_mvc/controllers/user.dart';
 
 
 class NavigationDrawer extends StatelessWidget {
-	UserController _userController;
+	final UserController _userController;
 
+	
 	NavigationDrawer(this._userController);
+
 
 	@override
 	Widget build(BuildContext context) {
