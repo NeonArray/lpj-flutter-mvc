@@ -108,7 +108,7 @@ class _LookupViewState extends State<LookupView> {
 		final double targetWidth = getDeviceTargetWidth(context);
 
 		return Scaffold(
-			drawer: NavigationDrawer(),
+			drawer: NavigationDrawer(widget._userController),
 			appBar: AppBar(
 				title: Text('Lookup/Report a Plate'),
 			),
