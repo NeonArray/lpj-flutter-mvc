@@ -12,6 +12,7 @@ import 'package:license_plate_judas_mvc/api/api.dart';
 /// the IO stream. We want to keep as much logic out of here as possible that isn't absolutely
 /// necessary. This model should be able to swap sources without impacting the rest of the application.
 class UserModel extends Model implements ModelInterface {
+	Timer _authTimer; /// The timer executes the callback `signUserOut` when it expires
 	User _authenticatedUser;
 	User get authedUser {
 		return _authenticatedUser;
