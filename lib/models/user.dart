@@ -59,12 +59,69 @@ class UserModel extends Model implements ModelInterface {
 	}
 
 
-	void setAuthenticatedUser(Map<String, dynamic> userData) {
+	void _setAuthenticatedUser(Map<String, dynamic> userData) {
 		_authenticatedUser = User(
-			id: userData['user'],
+			id: userData['id'],
 			email: userData['email'],
 			token: userData['idToken'],
 		);
+	}
+
+
+	Future<Map<String, String>> autoAuthenticate() async {
+		final SharedPreferences localUserData = await SharedPreferences.getInstance();
+		final String userToken = localUserData.getString('token');
+		final String expiryTimeString = localUserData.getString('expiryTime');
+		final DateTime parsedTimeString = expiryTimeString != null ? DateTime.parse(expiryTimeString) : DateTime.now();
+		final DateTime now = DateTime.now();
+
+		if (userToken == null) {
+			return null;
+		}
+
+		if (parsedTimeString.isBefore(now)) {
+			_authenticatedUser = null;
+			notifyListeners();
+			return null;
+		}
+
+		final int secondsTillExpire = parsedTimeString.difference(now).inSeconds;
+		final Map<String, String> userData = {
+			'id': localUserData.getString('id'),
+			'email': localUserData.getString('email'),
+			'token': userToken,
+		};
+
+		_setAuthenticatedUser(userData);
+
+		_setAuthTimeout(secondsTillExpire);
+
+		notifyListeners();
+
+		return userData;
+	}
+
+
+	void _setAuthTimeout(int secondsTillExpire) {
+		_authTimer = Timer(
+			Duration(
+				seconds: secondsTillExpire,
+			),
+			signUserOut,
+		);
+	}
+
+
+	Future<void> _setUserCookie(Map<String, String> responseData) async {
+		final DateTime now = DateTime.now();
+		final int sevenDaysInSeconds = 604800;
+		final DateTime expiryTime = now.add(Duration(seconds: sevenDaysInSeconds));
+
+		final SharedPreferences prefs = await SharedPreferences.getInstance();
+		prefs.setString('token', responseData['idToken']);
+		prefs.setString('email', responseData['email']);
+		prefs.setString('id', responseData['id']);
+		prefs.setString('expiryTime', expiryTime.toIso8601String());
 	}
 
 
@@ -74,7 +131,16 @@ class UserModel extends Model implements ModelInterface {
 
 
 	Future<void> signUserOut() async {
+		final SharedPreferences prefs = await SharedPreferences.getInstance();
 		_authenticatedUser = null;
+
+		if (_authTimer != null && _authTimer.isActive) {
+			_authTimer.cancel();
+		}
+
+		prefs.remove('token');
+		prefs.remove('email');
+		prefs.remove('id');
 
 		return await _api.signUserOut();
 	}
