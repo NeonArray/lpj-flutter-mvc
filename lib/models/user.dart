@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rxdart/subjects.dart';
 
 import 'package:license_plate_judas_mvc/definitions/user.dart';
 import 'package:license_plate_judas_mvc/definitions/auth_mode.dart';
