@@ -47,7 +47,7 @@ class API {
 		try {
 			user = await callback(email: email, password: password);
 			userData = {
-				'user': user.uid,
+				'id': user.uid,
 				'idToken': await user.getIdToken(refresh: false),
 				'email': user.email,
 			};
