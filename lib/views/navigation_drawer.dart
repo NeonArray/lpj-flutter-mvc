@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:license_plate_judas_mvc/controllers/user.dart';
-import 'package:license_plate_judas_mvc/utility/media_query.dart';
 
 
 class NavigationDrawer extends StatelessWidget {
-	final UserController _userController = UserController();
+	UserController _userController;
 
+	NavigationDrawer(this._userController);
 
 	@override
 	Widget build(BuildContext context) {
